@@ -1,7 +1,7 @@
 export interface IState {
-    rootPath: string;
-    filePath: string;
-    textCurrentLine: string;
-    cursorPosition: number;
-    cursorLine: number;
+  rootPath: string;
+  filePath: string;
+  textCurrentLine: string;
+  cursorPosition: number;
+  cursorLine: number;
 }
