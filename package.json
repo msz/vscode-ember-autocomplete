@@ -3,6 +3,7 @@
     "displayName": "Ember Autocomplete",
     "description": "Visual Studio Code plugin that autocompletes Ember modules in import statements",
     "license": "ISC",
+    "publisher": "michal-szewczak",
     "author": {
         "name": "Michał Szewczak",
         "email": "michal@szewczak.email",
