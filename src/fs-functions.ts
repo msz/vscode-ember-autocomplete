@@ -1,16 +1,16 @@
-import { readFile, readdir, statSync } from 'fs';
+import { readdir, readFile, statSync } from 'fs';
 
-export interface FsFunctions {
-    readJson: Function,
-    isFile: Function,
-    readDir: Function
+export interface IFsFunctions {
+    readJson: (file: any) => Promise<any>;
+    isFile: (path: string) => boolean;
+    readDir: (path: string) => Promise<any>;
 }
 
-export const fsf : FsFunctions = {
+export const fsf: IFsFunctions = {
     readJson,
     isFile,
-    readDir
-}
+    readDir,
+};
 
 function readJson(file) {
     return new Promise<any>((resolve, reject) => {
