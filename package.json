@@ -1,0 +1,75 @@
+{
+    "name": "vscode-ember-autocomplete",
+    "displayName": "Ember Autocomplete",
+    "description": "Visual Studio Code plugin that autocompletes Ember modules in import statements",
+    "license": "ISC",
+    "author": {
+        "name": "Michał Szewczak",
+        "email": "michal@szewczak.email",
+        "url": "michal.space"
+    },
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.0.0"
+    },
+    "homepage": "https://github.com/msz/vscode-ember-autocomplete",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/msz/vscode-ember-autocomplete.git"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onLanguage:typescript",
+        "onLanguage:javascript",
+        "onLanguage:javascriptreact",
+        "onLanguage:typescriptreact",
+        "onCommand:ember-autocomplete.import"
+    ],
+    "contributes": {
+        "configuration": {
+            "type": "object",
+            "title": "ember-autocomplete",
+            "properties": {
+                "ember-autocomplete.importES6": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "For import command. Use import statements instead of require()"
+                },
+                "ember-autocomplete.importQuotes": {
+                    "type": "string",
+                    "default": "'",
+                    "description": "For import command. The type of quotes to use in the snippet"
+                },
+                "ember-autocomplete.importLinebreak": {
+                    "type": "string",
+                    "default": ";\r\n",
+                    "description": "For import command. The linebreak used after the snippet"
+                },
+                "ember-autocomplete.importDeclarationType": {
+                    "type": "string",
+                    "default": "const",
+                    "description": "For import command. The declaration type used for require()"
+                }
+            }
+        },
+        "commands": [
+            {
+                "command": "ember-autocomplete.import",
+                "title": "Ember Autocomplete: Import module"
+            }
+        ]
+    },
+    "icon": "images/icon.png",
+    "main": "./out/src/extension",
+    "scripts": {
+        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install"
+    },
+    "devDependencies": {
+        "typescript": "^1.8.5",
+        "vscode": "^0.11.0"
+    }
+}
