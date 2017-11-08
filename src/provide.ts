@@ -2,7 +2,7 @@ import { join, resolve } from "path";
 import * as repl from "repl";
 import { CompletionItem } from "vscode";
 import { IConfig } from "./config";
-import { fsf, IFsFunctions } from "./fs-functions";
+import { IFsFunctions } from "./fs-functions";
 import { IState } from "./i-state";
 import { PackageCompletionItem } from "./package-completion-item";
 

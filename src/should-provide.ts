@@ -2,19 +2,17 @@ import { IState } from "./i-state";
 
 export function shouldProvide(state: IState) {
   return (
-    isImportOrRequire(state.textCurrentLine, state.cursorPosition) &&
+    isImport(state.textCurrentLine, state.cursorPosition) &&
     !startsWithADot(state.textCurrentLine, state.cursorPosition)
   );
 }
 
-function isImportOrRequire(textCurrentLine: string, position: number): boolean {
-  const isImport = textCurrentLine.substring(0, 6) === "import";
-  const isRequire = textCurrentLine.indexOf("require(") !== -1;
+function isImport(textCurrentLine: string, position: number): boolean {
+  const startsWithImport = textCurrentLine.substring(0, 6) === "import";
   return (
-    (isImport &&
-      (isAfterFrom(textCurrentLine, position) ||
-        isImportWithoutFrom(textCurrentLine, position))) ||
-    isRequire
+    startsWithImport &&
+    (isAfterFrom(textCurrentLine, position) ||
+      isImportWithoutFrom(textCurrentLine, position))
   );
 }
 
