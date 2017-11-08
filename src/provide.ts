@@ -1,5 +1,4 @@
 import { join, resolve } from "path";
-import * as repl from "repl";
 import { CompletionItem, Position } from "vscode";
 import { IConfig } from "./config";
 import { IFsFunctions } from "./fs-functions";
@@ -40,10 +39,6 @@ export function getNpmPackages(
         config.scanDevDependencies ? packageJson.devDependencies || {} : {}
       )
     ]);
-}
-
-function getBuildInModules(): string[] {
-  return (repl as any)._builtinLibs;
 }
 
 function getPackageJson(
@@ -88,7 +83,7 @@ function readModuleSubFolders(
     return fsf
       .readDir(path)
       .then(files => files.map(file => pkgFragment + file.replace(/\.js$/, "")))
-      .catch(err => [""]);
+      .catch(() => [""]);
   }
 
   return Promise.resolve(dependencies);

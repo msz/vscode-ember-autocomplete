@@ -119,6 +119,6 @@ function isFileMock(path: string) {
   );
 }
 
-function readDirMock(path: any) {
+function readDirMock() {
   return Promise.resolve([]);
 }

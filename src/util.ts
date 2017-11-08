@@ -1,6 +1,6 @@
 import { readdir, stat } from "fs";
 import { extname, join, relative, sep } from "path";
-import { window, workspace } from "vscode";
+import { workspace } from "vscode";
 
 export const isDirectory = (path: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
@@ -16,8 +16,7 @@ export const isDirectory = (path: string): Promise<boolean> => {
 
 export const readFilesFromDir = (dir: string): Promise<string[]> => {
   return new Promise<string[]>((resolve, reject) => {
-    const paths: string[] = [];
-    readdir(dir, (error, files) => {
+    readdir(dir, (_, files) => {
       Promise.all(
         files.map(file => {
           const path = join(dir, file);
@@ -94,7 +93,7 @@ export const getImportStatementFromFilepath = (
 
   let moduleName: string = fragments[fragments.length - 1].replace(
     /[\-](.)/g,
-    (substring: string, ...rest: any[]) => rest[0].toUpperCase()
+    (...rest: any[]) => rest[0].toUpperCase()
   );
 
   moduleName = moduleName
@@ -127,6 +126,6 @@ export const getImportStatementFromFilepath = (
 };
 
 export const guessVariableName = (packageName: string): string =>
-  packageName.replace(/-\w/gm, (sub: string, args: any[]) =>
+  packageName.replace(/-\w/gm, (sub: string) =>
     sub.replace("-", "").toUpperCase()
   );

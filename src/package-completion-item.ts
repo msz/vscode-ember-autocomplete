@@ -3,7 +3,6 @@ import {
   CompletionItemKind,
   Position,
   Range,
-  TextDocument,
   TextEdit
 } from "vscode";
 

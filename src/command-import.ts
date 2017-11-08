@@ -3,18 +3,13 @@ import {
   QuickPickItem,
   QuickPickOptions,
   TextEditor,
-  TextEditorEdit,
   window,
   workspace
 } from "vscode";
 import { getConfig, IConfig } from "./config";
 import { fsf } from "./fs-functions";
 import { getNpmPackages } from "./provide";
-import {
-  getImportStatementFromFilepath,
-  getQuickPickItems,
-  guessVariableName
-} from "./util";
+import { guessVariableName } from "./util";
 
 const quickPickOptions: QuickPickOptions = {
   matchOnDescription: true

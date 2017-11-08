@@ -1,16 +1,13 @@
-import { readdir, readFile, statSync } from "fs";
 import { dirname } from "path";
 import {
   CompletionItem,
-  CompletionItemKind,
   CompletionItemProvider,
   Position,
   TextDocument,
   workspace
 } from "vscode";
-import { getConfig, IConfig } from "./config";
+import { getConfig } from "./config";
 import { fsf } from "./fs-functions";
-import { PackageCompletionItem } from "./package-completion-item";
 import { provide } from "./provide";
 import { shouldProvide } from "./should-provide";
 

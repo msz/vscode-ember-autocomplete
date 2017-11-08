@@ -1,5 +1,4 @@
 import * as assert from "assert";
-import { Position } from "vscode";
 import { shouldProvide } from "../src/should-provide";
 
 suite("shouldProvide Tests", () => {
