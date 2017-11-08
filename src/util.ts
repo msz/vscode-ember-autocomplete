@@ -2,7 +2,7 @@ import { readdir, stat } from "fs";
 import { extname, join, relative, sep } from "path";
 import { window, workspace } from "vscode";
 
-export const isDirectory = (path): Promise<boolean> => {
+export const isDirectory = (path: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     stat(path, (error, stats) => {
       if (error) {
@@ -40,25 +40,28 @@ export const readFilesFromDir = (dir: string): Promise<string[]> => {
 };
 
 export const readFilesFromPackage = (
-  packageName: string
+  packageName: string,
+  rootPath: string
 ): Promise<string[]> => {
-  return readFilesFromDir(
-    join(workspace.rootPath, "node_modules", packageName)
-  );
+  return readFilesFromDir(join(rootPath, "node_modules", packageName));
 };
 
-export const getQuickPickItems = (packages: string[]): Promise<any> => {
-  const root = workspace.rootPath;
+export function getQuickPickItems(
+  packages: string[],
+  rootPath: string
+): Promise<any> {
   const nodeRegEx = new RegExp(`^node_modules\\${sep}`);
 
   return Promise.all(
-    [readFilesFromDir(root)].concat(packages.map(readFilesFromPackage))
+    [readFilesFromDir(rootPath)].concat(
+      packages.map(packageName => readFilesFromPackage(packageName, rootPath))
+    )
   ).then((filesPerPackage: any[]) => {
     const items: any[] = []
       .concat(...filesPerPackage)
       .map((filePath: string) => {
         const partialPath: string = filePath
-          .replace(root + sep, "")
+          .replace(rootPath + sep, "")
           .replace(nodeRegEx, "");
         const fragments: string[] = partialPath.split(sep);
         const label: string = fragments[fragments.length - 1];
@@ -69,14 +72,18 @@ export const getQuickPickItems = (packages: string[]): Promise<any> => {
 
     return items;
   });
-};
+}
 
-export const getImportStatementFromFilepath = (filePath: string): string => {
-  const partialPath: string = !filePath.includes("node_modules")
-    ? relative(window.activeTextEditor.document.fileName, filePath)
-    : filePath.replace(join(workspace.rootPath, "node_modules") + sep, "");
+export const getImportStatementFromFilepath = (
+  filePath: string,
+  dirPath: string,
+  rootPath: string
+): string => {
+  const partialPath: string = !dirPath.includes("node_modules")
+    ? relative(filePath, dirPath)
+    : dirPath.replace(join(rootPath, "node_modules") + sep, "");
 
-  const fragments: string[] = filePath
+  const fragments: string[] = dirPath
     .split(sep)
     .map((fragment: string, index: number, arr: any[]) => {
       return index === arr.length - 1

@@ -11,7 +11,7 @@
 // a possible error to the callback or null if none.
 
 /*tslint:disable:no-submodule-imports*/
-import testRunner from "vscode/lib/testrunner";
+import * as testRunner from "vscode/lib/testrunner";
 /*tslint:enable:no-submodule-imports*/
 
 // You can directly control Mocha options by uncommenting the following lines

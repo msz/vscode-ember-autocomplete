@@ -1,60 +1,56 @@
 import * as assert from "assert";
-import { IState } from "../src/i-state";
+import { Position } from "vscode";
 import { shouldProvide } from "../src/should-provide";
 
 suite("shouldProvide Tests", () => {
   test("Should provide when is import", () => {
-    const state = createState("import {  } from '‸'");
-    assert.equal(true, shouldProvide(state));
-  });
-
-  test("Should provide when is require", () => {
-    const state = createState("var xy = require('‸')");
-    assert.equal(true, shouldProvide(state));
+    const { textCurrentLine, cursorPosition } = createState(
+      "import {  } from '‸'"
+    );
+    assert.equal(true, shouldProvide(textCurrentLine, cursorPosition));
   });
 
   test("Should not provide when not import or require", () => {
-    const state = createState("anything '‸'");
-    assert.equal(false, shouldProvide(state));
+    const { textCurrentLine, cursorPosition } = createState("anything '‸'");
+    assert.equal(false, shouldProvide(textCurrentLine, cursorPosition));
   });
 
   test("Should not provide when import starts with a dot", () => {
-    const state = createState("import {  } from '.‸'");
-    assert.equal(false, shouldProvide(state));
+    const { textCurrentLine, cursorPosition } = createState(
+      "import {  } from '.‸'"
+    );
+    assert.equal(false, shouldProvide(textCurrentLine, cursorPosition));
   });
 
   test("Should not provide when import starts with a dot", () => {
-    const state = createState("import '.‸'");
-    assert.equal(false, shouldProvide(state));
+    const { textCurrentLine, cursorPosition } = createState("import '.‸'");
+    assert.equal(false, shouldProvide(textCurrentLine, cursorPosition));
   });
 
   test("Should provide when import is followed by a single quoted module name", () => {
-    const state = createState("import '‸'");
-    assert.equal(true, shouldProvide(state));
+    const { textCurrentLine, cursorPosition } = createState("import '‸'");
+    assert.equal(true, shouldProvide(textCurrentLine, cursorPosition));
   });
 
   test("Should provide when import is followed by a single quoted module name with bad spacing", () => {
-    const state = createState("import'‸'");
-    assert.equal(true, shouldProvide(state));
+    const { textCurrentLine, cursorPosition } = createState("import'‸'");
+    assert.equal(true, shouldProvide(textCurrentLine, cursorPosition));
   });
 
   test("Should provide when import is followed by a double quoted module name", () => {
-    const state = createState('import "‸"');
-    assert.equal(true, shouldProvide(state));
+    const { textCurrentLine, cursorPosition } = createState('import "‸"');
+    assert.equal(true, shouldProvide(textCurrentLine, cursorPosition));
   });
 
   test("Should provide when import is followed by a double quoted module name with bad spacing", () => {
-    const state = createState('import"‸"');
-    assert.equal(true, shouldProvide(state));
+    const { textCurrentLine, cursorPosition } = createState('import"‸"');
+    assert.equal(true, shouldProvide(textCurrentLine, cursorPosition));
   });
 });
 
-function createState(line: string): IState {
+function createState(line: string) {
   return {
-    rootPath: undefined,
-    filePath: undefined,
     textCurrentLine: line.split("‸").join(),
-    cursorPosition: line.indexOf("‸"),
-    cursorLine: 0
+    cursorPosition: line.indexOf("‸")
   };
 }

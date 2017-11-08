@@ -1,38 +1,44 @@
 import { join, resolve } from "path";
 import * as repl from "repl";
-import { CompletionItem } from "vscode";
+import { CompletionItem, Position } from "vscode";
 import { IConfig } from "./config";
 import { IFsFunctions } from "./fs-functions";
-import { IState } from "./i-state";
 import { PackageCompletionItem } from "./package-completion-item";
 
 export function provide(
-  state: IState,
+  textCurrentLine: string,
+  rootPath: string,
+  dirPath: string,
+  position: Position,
   config: IConfig,
   fsf: IFsFunctions
 ): Promise<CompletionItem[]> {
-  return getNpmPackages(state, config, fsf)
+  return getNpmPackages(dirPath, rootPath, config, fsf)
     .then(dependencies => {
       return config.packageSubfoldersIntellisense
-        ? readModuleSubFolders(dependencies, state, fsf)
+        ? readModuleSubFolders(dependencies, textCurrentLine, rootPath, fsf)
         : dependencies;
     })
-    .then(dependencies => dependencies.map(d => toCompletionItem(d, state)));
+    .then(dependencies =>
+      dependencies.map(
+        d => new PackageCompletionItem(d, textCurrentLine, position)
+      )
+    );
 }
 
 export function getNpmPackages(
-  state: IState,
+  dirPath: string,
+  rootPath: string,
   config: IConfig,
   fsf: IFsFunctions
 ) {
   return fsf
-    .readJson(getPackageJson(state, config, fsf))
+    .readJson(getPackageJson(dirPath, rootPath, config, fsf))
     .then(packageJson => [
       ...Object.keys(packageJson.dependencies || {}),
       ...Object.keys(
         config.scanDevDependencies ? packageJson.devDependencies || {} : {}
-      ),
-      ...(config.showBuildInLibs ? getBuildInModules() : [])
+      )
     ]);
 }
 
@@ -40,46 +46,44 @@ function getBuildInModules(): string[] {
   return (repl as any)._builtinLibs;
 }
 
-function toCompletionItem(dependency: string, state: IState) {
-  return new PackageCompletionItem(dependency, state);
-}
-
 function getPackageJson(
-  state: IState,
+  dirPath: string,
+  rootPath: string,
   config: IConfig,
   fsf: IFsFunctions
 ): string {
   return config.recursivePackageJsonLookup
-    ? nearestPackageJson(state.rootPath, state.filePath, fsf)
-    : join(state.rootPath, "package.json");
+    ? nearestPackageJson(rootPath, dirPath, fsf)
+    : join(rootPath, "package.json");
 }
 
 function nearestPackageJson(
   rootPath: string,
-  currentPath: string,
+  currentDirPath: string,
   fsf: IFsFunctions
 ): string {
-  const packageJsonFullPath = join(currentPath, "package.json");
+  const packageJsonFullPath = join(currentDirPath, "package.json");
 
-  if (currentPath === rootPath || fsf.isFile(packageJsonFullPath)) {
+  if (currentDirPath === rootPath || fsf.isFile(packageJsonFullPath)) {
     return packageJsonFullPath;
   }
 
-  return nearestPackageJson(rootPath, resolve(currentPath, ".."), fsf);
+  return nearestPackageJson(rootPath, resolve(currentDirPath, ".."), fsf);
 }
 
 function readModuleSubFolders(
   dependencies: string[],
-  state: IState,
+  textCurrentLine: string,
+  rootPath: string,
   fsf: IFsFunctions
-) {
-  const fragments: string[] = state.textCurrentLine.split("from ");
+): Promise<string[]> {
+  const fragments: string[] = textCurrentLine.split("from ");
   const pkgFragment: string = fragments[fragments.length - 1].split(/['"]/)[1];
   const pkgFragmentSplit = pkgFragment.split("/");
   const packageName: string = pkgFragmentSplit[0];
 
   if (dependencies.filter(dep => dep === packageName).length) {
-    const path = join(state.rootPath, "node_modules", ...pkgFragmentSplit);
+    const path = join(rootPath, "node_modules", ...pkgFragmentSplit);
     // Todo: make the replace function work with other filetypes as well
     return fsf
       .readDir(path)

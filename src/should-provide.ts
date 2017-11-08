@@ -1,9 +1,7 @@
-import { IState } from "./i-state";
-
-export function shouldProvide(state: IState) {
+export function shouldProvide(textCurrentLine: string, cursorPosition: number) {
   return (
-    isImport(state.textCurrentLine, state.cursorPosition) &&
-    !startsWithADot(state.textCurrentLine, state.cursorPosition)
+    isImport(textCurrentLine, cursorPosition) &&
+    !startsWithADot(textCurrentLine, cursorPosition)
   );
 }
 
@@ -64,7 +62,10 @@ function startsWithADot(textCurrentLine: string, position: number) {
   );
 }
 
-function getTextWithinString(text: string, position: number): string {
+function getTextWithinString(
+  text: string,
+  position: number
+): string | undefined {
   const textToPosition = text.substring(0, position);
   const quoatationPosition = Math.max(
     textToPosition.lastIndexOf('"'),

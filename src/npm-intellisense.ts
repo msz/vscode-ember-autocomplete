@@ -10,7 +10,6 @@ import {
 } from "vscode";
 import { getConfig, IConfig } from "./config";
 import { fsf } from "./fs-functions";
-import { IState } from "./i-state";
 import { PackageCompletionItem } from "./package-completion-item";
 import { provide } from "./provide";
 import { shouldProvide } from "./should-provide";
@@ -20,16 +19,13 @@ export class NpmIntellisense implements CompletionItemProvider {
     document: TextDocument,
     position: Position
   ): Thenable<CompletionItem[]> {
-    const state: IState = {
-      rootPath: workspace.rootPath,
-      filePath: dirname(document.fileName),
-      textCurrentLine: document.lineAt(position).text,
-      cursorPosition: position.character,
-      cursorLine: position.line
-    };
+    const rootPath = workspace.rootPath;
+    const textCurrentLine = document.lineAt(position).text;
+    const filePath = dirname(document.fileName);
 
-    return shouldProvide(state)
-      ? provide(state, getConfig(), fsf)
+    return rootPath !== undefined &&
+      shouldProvide(textCurrentLine, position.character)
+      ? provide(textCurrentLine, rootPath, filePath, position, getConfig(), fsf)
       : Promise.resolve([]);
   }
 }

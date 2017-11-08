@@ -6,30 +6,28 @@ import {
   TextDocument,
   TextEdit
 } from "vscode";
-import { IState } from "./i-state";
 
 export class PackageCompletionItem extends CompletionItem {
-  constructor(label: string, state: IState) {
+  constructor(label: string, textCurrentLine: string, position: Position) {
     super(label);
     this.kind = CompletionItemKind.Module;
-    this.textEdit = TextEdit.replace(this.importStringRange(state), label);
+    this.textEdit = TextEdit.replace(
+      this.importStringRange(textCurrentLine, position),
+      label
+    );
   }
 
-  public importStringRange({
-    textCurrentLine,
-    cursorLine,
-    cursorPosition
-  }): Range {
-    const textToPosition = textCurrentLine.substring(0, cursorPosition);
+  public importStringRange(textCurrentLine: string, position: Position): Range {
+    const textToPosition = textCurrentLine.substring(0, position.character);
     const quotationPosition = Math.max(
       textToPosition.lastIndexOf('"'),
       textToPosition.lastIndexOf("'")
     );
     return new Range(
-      cursorLine,
+      position.line,
       quotationPosition + 1,
-      cursorLine,
-      cursorPosition
+      position.line,
+      position.character
     );
   }
 }
