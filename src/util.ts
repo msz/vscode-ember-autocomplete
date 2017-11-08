@@ -100,13 +100,13 @@ export const getImportStatementFromFilepath = (filePath: string): string => {
       .filter(fragment => fragment !== "index.js")
       .join("/") || ".";
 
-  const importES6: boolean = workspace.getConfiguration("npm-intellisense")
+  const importES6: boolean = workspace.getConfiguration("ember-autocomplet")
     .importES6;
-  const quoteType: string = workspace.getConfiguration("npm-intellisense")
+  const quoteType: string = workspace.getConfiguration("ember-autocomplete")
     .importQuotes;
-  const linebreak: string = workspace.getConfiguration("npm-intellisense")
+  const linebreak: string = workspace.getConfiguration("ember-autocomplete")
     .importLinebreak;
-  const declaration: string = workspace.getConfiguration("npm-intellisense")
+  const declaration: string = workspace.getConfiguration("ember-autocomplete")
     .importDeclarationType;
   let statement: string;
 
